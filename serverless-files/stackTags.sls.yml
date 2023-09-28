@@ -1,0 +1,9 @@
+StackTags:
+    Ambiente: ${opt:stage, 'dev'}
+    Disponibilidad: LU-DO-24:00
+    Despliegue: ServerlessFramework
+    Aplicativo: Portale Digitales 7eleven
+    Compania: ICONN
+    Producto: Transversal
+    Componente: SecretsManager
+    NombreAplicacion: secrets-origin-${self:custom.stage} 

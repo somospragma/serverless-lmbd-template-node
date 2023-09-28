@@ -1,0 +1,7 @@
+AwsIdAccount:
+  dev: 
+    id: "XXXXXXXXXXXX"
+  qa: 
+    id: "XXXXXXXXXXXX"
+  pdn: 
+    id: "XXXXXXXXXXXX"

@@ -1,0 +1,83 @@
+service: iconn-origin
+frameworkVersion: '3'
+useDotenv: true
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  environment: ${file(serverless-files/enviroments.sls.yml):Enviroments}
+  stackTags: ${file(serverless-files/stackTags.sls.yml):StackTags}
+  bucketName: theluguiant.${self:custom.stage}.bucket
+  lambdaPrefix: function-lambda
+  region: ${file(serverless-files/enviroments.sls.yml):Enviroments.region}
+
+provider:
+  name: aws
+  stage: ${self:custom.stage}
+  runtime: nodejs14.x
+  region: ${self:custom.environment.region}
+  lambdaHashingVersion: 20201221
+  environment: ${self:custom.environment}
+#  apiGateway:
+#    restApiId: ${self:custom.environment.restApiId}
+#    restApiRootResourceId: ${self:custom.environment.restApiRootResourceId}
+#    description: Some Description
+  deploymentBucket: 
+    name: ${self:custom.bucketName}
+    serverSideEncryption: AES256
+    versioning: true
+    maxPreviousDeploymentArtifacts: 10
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:secrets-origin-${self:custom.stage}-*
+
+plugins:
+  - serverless-offline
+
+functions:
+  getCreditCard:
+    name: ${self:custom.lambdaPrefix}-${self:custom.stage}-origins-get-credit-card-status
+    handler: src/lambda/getCardStatus.app
+    memorySize: ${self:custom.environment.memorySize}
+    timeout: ${self:custom.environment.timeout}
+    maximumRetryAttempts: 1
+    environment:
+      secretName: secrets-origin-${self:custom.stage}
+      typeRequest: post
+    events: ${file(serverless-files/httpEvents.sls.yml):HttpEvents.creditCardGetStatus}
+
+resources:
+  Resources:
+    SecretsOrigin:
+      Type: 'AWS::SecretsManager::Secret'
+      Properties:
+        Name: secrets-origin-${self:custom.stage}
+        Description: "This secret has a dynamically generated secret password."
+        SecretString: "{\"apiKey\": \"*********************\", \"appID\": \"APP01\", \"appVersion\": \"v1.0\"}"
+        Tags:
+          -
+            Key: Ambiente
+            Value: ${self:custom.stage}
+          -
+            Key: Disponibilidad
+            Value: LU-DO-24:00
+          - 
+            Key: Despliegue
+            Value: ServerlessFramework
+          - 
+            Key: Aplicativo
+            Value: Portale Digitales 7eleven        
+          - 
+            Key: Compania
+            Value: ICONN
+          - 
+            Key: Producto
+            Value: Transversal
+          - 
+            Key: Componente
+            Value: SecretsManager
+          - 
+            Key: NombreAplicacion 
+            Value: secrets-origin-${self:custom.stage}        
+  

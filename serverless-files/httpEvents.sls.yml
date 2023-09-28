@@ -1,0 +1,29 @@
+HttpEvents:
+  creditCardGetStatus: 
+    - http:
+        path: credit-card/get-status
+        method: POST
+        cors:
+          origin: ${self:custom.environment.mainDomain}
+          maxAge: 86400
+          cacheControl: 'max-age=600, s-maxage=600, proxy-revalidate'
+          headers:
+            - Content-Type
+            - X-Amz-Date
+            - Authorization
+            - X-Api-Key
+            - X-Amz-Security-Token
+            - X-Amz-User-Agent
+            - X-Amzn-Trace-Id
+        request:
+          template:
+            application/json: '{ "httpMethod" : "$context.httpMethod" }'
+        response:
+          headers:
+            Access-Control-Allow-Methods: "'POST'"
+            Content-Type: "'application/json'"
+            Cache-Control: "'max-age=120'"
+          statusCodes:
+            200:
+              pattern: ''
+  
