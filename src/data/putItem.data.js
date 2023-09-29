@@ -1,4 +1,9 @@
-const AWS = require("aws-sdk");
+const {
+          DynamoDBDocument
+      } = require("@aws-sdk/lib-dynamodb"),
+      {
+          DynamoDB
+      } = require("@aws-sdk/client-dynamodb");
 const { timeStamp } = require("../utils/general/timeStamp.util");
 const { msn } = require("../const/msn.const");
 
@@ -8,7 +13,7 @@ module.exports.putItem = async (params, tableName) => {
         Item: params,
         ReturnValues: "ALL_OLD"
     };
-    const dynamoDb = new AWS.DynamoDB.DocumentClient();
+    const dynamoDb = DynamoDBDocument.from(new DynamoDB());
     await dynamoDb.put(paramsData, (err, data) => {
         if (err) {
             console.log(err);

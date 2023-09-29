@@ -1,4 +1,9 @@
-const AWS = require("aws-sdk");
+const {
+          DynamoDBDocument
+      } = require("@aws-sdk/lib-dynamodb"),
+      {
+          DynamoDB
+      } = require("@aws-sdk/client-dynamodb");
 const { timeStamp } = require("../utils/general/timeStamp.util");
 const { msn } = require("../const/msn.const");
 const { id }  = require("../utils/dynamo/idGenerator.utils");
@@ -33,7 +38,7 @@ module.exports.putMoviment = (amount, index, idUser, uniqueIdUser, reference, re
         ReturnValues:"UPDATED_NEW"
 
     };
-    const dynamoDb = new AWS.DynamoDB.DocumentClient();
+    const dynamoDb = DynamoDBDocument.from(new DynamoDB());
     return dynamoDb.update(paramsData, (err, data) => {
         if (err) {
             console.log(err);
@@ -44,5 +49,5 @@ module.exports.putMoviment = (amount, index, idUser, uniqueIdUser, reference, re
             error.time = timeStamp();
             throw error;
         } 
-    }).promise();
+    });
 } 

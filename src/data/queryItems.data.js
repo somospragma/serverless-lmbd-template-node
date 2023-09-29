@@ -1,4 +1,9 @@
-const AWS = require("aws-sdk");
+const {
+          DynamoDBDocument
+      } = require("@aws-sdk/lib-dynamodb"),
+      {
+          DynamoDB
+      } = require("@aws-sdk/client-dynamodb");
 const { timeStamp } = require("../utils/general/timeStamp.util");
 const { msn } = require("../const/msn.const");
 const { scan } = require("../utils/dynamo/scan.utils")
@@ -11,7 +16,7 @@ module.exports.queryItems = async (params, tableName) => {
         ...queryDynamo
     };
 
-    const dynamoDb = new AWS.DynamoDB.DocumentClient();
+    const dynamoDb = DynamoDBDocument.from(new DynamoDB());
     
     return dynamoDb.scan(paramsData, (err, data) => {
         if (err) {
@@ -22,6 +27,6 @@ module.exports.queryItems = async (params, tableName) => {
             error.time = timeStamp();
             throw error;
         }
-    }).promise();
+    });
 
 } 

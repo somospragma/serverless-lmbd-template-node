@@ -9,14 +9,21 @@ custom:
   bucketName: theluguiant.${self:custom.stage}.bucket
   lambdaPrefix: function-lambda
   region: ${file(serverless-files/enviroments.sls.yml):Enviroments.region}
-
+  
 provider:
   name: aws
   stage: ${self:custom.stage}
-  runtime: nodejs14.x
+  runtime: nodejs18.x
   region: ${self:custom.environment.region}
   lambdaHashingVersion: 20201221
   environment: ${self:custom.environment}
+  stackTags:
+    Ambiente: ${self:custom.stage}
+    Disponibilidad: LU-DO-24:00
+    Despliegue: ServerlessFramework
+    Aplicativo: Portale Digitales 7eleven
+    Compania: ICONN
+    Producto: Transversal
 #  apiGateway:
 #    restApiId: ${self:custom.environment.restApiId}
 #    restApiRootResourceId: ${self:custom.environment.restApiRootResourceId}
@@ -30,10 +37,17 @@ provider:
     - Effect: 'Allow'
       Action:
         - secretsmanager:GetSecretValue
-      Resource: arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:secrets-origin-${self:custom.stage}-*
+      Resource: ${self:custom.environment.secretOrigins}
 
-plugins:
-  - serverless-offline
+package:
+  exclude:
+    - ./**
+    - node_modules/.cache/**
+  include:
+    - src/**
+    - node_modules/**
+  individually: true
+  excludeDevDependencies: false
 
 functions:
   getCreditCard:
@@ -42,6 +56,9 @@ functions:
     memorySize: ${self:custom.environment.memorySize}
     timeout: ${self:custom.environment.timeout}
     maximumRetryAttempts: 1
+    tags:
+      Componente: Lambda
+      NombreAplicacion: ${self:custom.lambdaPrefix}-${self:custom.stage}-origins-get-credit-card-status
     environment:
       secretName: secrets-origin-${self:custom.stage}
       typeRequest: post

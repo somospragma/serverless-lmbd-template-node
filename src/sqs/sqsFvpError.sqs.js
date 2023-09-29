@@ -1,4 +1,6 @@
-const {SQS} = require("aws-sdk");
+const {
+    SQS
+} = require("@aws-sdk/client-sqs");
 
 module.exports.sendFvpError = (message) => {
     const sqs = new SQS();
