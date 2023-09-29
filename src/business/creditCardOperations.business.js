@@ -2,8 +2,10 @@ const { Context } = require("../patterns/strategy/bodyRequest/context/contextMan
 const { JsonSchemaValidator } = require("../validators/validateOrError/jsonSchemaValidator.validate");
 const { timeStamp } = require("../utils/general/timeStamp.util");
 const axios = require('axios');
-const AWS = require('aws-sdk');
-const secretsManager = new AWS.SecretsManager();
+const {
+    SecretsManager
+} = require("@aws-sdk/client-secrets-manager");
+const secretsManager = new SecretsManager();
 
 exports.CreditCardOperationsBusiness = class CreditCardOperationsBusiness{
     constructor(typeRequest, event){
@@ -27,7 +29,7 @@ exports.CreditCardOperationsBusiness = class CreditCardOperationsBusiness{
 
     async getSecret(secretName){
 
-        const secret = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
+        const secret = await secretsManager.getSecretValue({ SecretId: secretName });
         const secretValue = JSON.parse(secret.SecretString);
         
         return secretValue;

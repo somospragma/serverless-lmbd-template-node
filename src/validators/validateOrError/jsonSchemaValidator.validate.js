@@ -2,11 +2,11 @@ const Validator = require("jsonschema").Validator;
 const { timeStamp } = require("../../utils/general/timeStamp.util");
 
 const processErrorData = (res) =>{
-    return  {
+    return {
         name: res.path.length > 0 ? res.path[0] : res.argument,
         message: res.message.replace(/\"/g, "'"),
         value: res.path.length > 0 ? res.argument : null
-    }
+    };
 };
 
 module.exports.JsonSchemaValidator = (data, schema, msnError) => {
